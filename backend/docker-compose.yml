@@ -14,6 +14,12 @@ services:
       - ./.env
     volumes:
       - ".data/redis:/data"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   # database containers, one for each db
   pg_fixPermissions:
@@ -34,9 +40,15 @@ services:
     volumes:
       - ".data/pg:/bitnami/postgresql/data"
     ports:
-      - "5432:5432"
+      - "5433:5433"
     depends_on:
       - pg_fixPermissions
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -h localhost -p 5433"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -51,6 +63,12 @@ services:
     ports:
       - 5672:5672
       - 15672:15672
+    healthcheck:
+      test: ["CMD", "rabbitmqctl", "status"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
 
   api:
     build:
@@ -70,6 +88,7 @@ services:
       - rabbitmq
     ports:
       - "3100:3100"
+      - "3200:3200"
     volumes:
       - .data/.wwebjs_auth:/app/.wwebjs_auth
       - .data/medias:/app/public

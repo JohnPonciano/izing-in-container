@@ -85,10 +85,19 @@ module.exports = function (ctx) {
 
     // Full list of options: https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-devServer
     devServer: {
-      https: false,
-      // port: 8080,
-      open: true // opens browser window automatically
+      https: true, // Habilita HTTPS para o devServer, caso use SSL em produção
+      port: 443, // Porta padrão HTTPS
+      open: true, // Abre o navegador automaticamente
+      proxy: {
+        '/sockjs-node': {
+          target: 'https://chat.emfils-tech.com.br/', // Seu domínio
+          ws: true, // Habilitar WebSockets
+          changeOrigin: true, // Muda a origem do host para o domínio alvo
+          secure: false // Desabilita verificação de SSL em dev
+        }
+      }
     },
+    
 
     // https://quasar.dev/quasar-cli/quasar-conf-js#Property%3A-framework
     framework: {

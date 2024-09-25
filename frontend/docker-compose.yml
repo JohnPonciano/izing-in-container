@@ -1,0 +1,17 @@
+version: "3.8"
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: quasar-frontend
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./:/app
+      - /app/node_modules  # Evita problemas com node_modules local
+    working_dir: /app  # Define o diretório de trabalho padrão
+    command: quasar dev -p 8080  # Inicia o Quasar em modo de desenvolvimento
+    #command: quasar build -p 8080
+    restart: always
